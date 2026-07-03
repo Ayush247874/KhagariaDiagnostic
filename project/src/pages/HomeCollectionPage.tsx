@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
-import { supabase, Service, HealthPackage } from '../lib/supabase';
+import { services, Service } from '../data/services';
+import { healthPackages, HealthPackage } from '../data/packages';
 import { Truck, CheckCircle, User, Phone, MapPin, FileText, Calendar, Clock } from 'lucide-react';
 
 export default function HomeCollectionPage() {
-  const [services, setServices] = useState<(Service | HealthPackage)[]>([]);
+  const [allTests, setAllTests] = useState<(Service | HealthPackage)[]>([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -20,28 +21,13 @@ export default function HomeCollectionPage() {
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
-    async function fetchData() {
-      try {
-        const [servicesRes, packagesRes] = await Promise.all([
-          supabase.from('services').select('*').order('name'),
-          supabase.from('health_packages').select('*').order('name'),
-        ]);
+  const tests = [...services, ...healthPackages].sort((a, b) =>
+    a.name.localeCompare(b.name)
+  );
 
-        const allTests = [
-          ...(servicesRes.data || []),
-          ...(packagesRes.data || []),
-        ].sort((a, b) => a.name.localeCompare(b.name));
-
-        setServices(allTests);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchData();
-  }, []);
+  setAllTests(tests);
+  setLoading(false);
+}, []);
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
@@ -66,24 +52,21 @@ export default function HomeCollectionPage() {
 
     setSubmitting(true);
     try {
-      const { error } = await supabase
-        .from('bookings')
-        .insert({
-          patient_name: formData.patient_name,
-          mobile_number: formData.mobile_number,
-          address: formData.address,
-          test_name: formData.test_name,
-          preferred_date: formData.preferred_date,
-          booking_type: 'home_collection',
-          status: 'pending',
-        });
+      const booking = {
+        ...formData,
+        bookingId: `KDC${Date.now().toString().slice(-8)}`,
+        bookingDate: new Date().toISOString(),
+      };
 
-      if (error) throw error;
-      setBookingId(`KDC-HC${Date.now().toString().slice(-8)}`);
+      console.log('Booking Submitted:', booking);
+
+      setBookingId(booking.bookingId);
       setSubmitted(true);
     } catch (error) {
-      console.error('Error submitting booking:', error);
-      setErrors({ submit: 'Failed to submit booking. Please try again.' });
+      console.error(error);
+      setErrors({
+        submit: 'Failed to submit booking.',
+      });
     } finally {
       setSubmitting(false);
     }
@@ -270,7 +253,7 @@ export default function HomeCollectionPage() {
                     }`}
                   >
                     <option value="">Select a test</option>
-                    {services.map((service) => (
+                    {allTests.map((service)=> (
                       <option key={service.id} value={service.name}>
                         {service.name}
                       </option>

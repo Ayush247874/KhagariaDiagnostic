@@ -24,25 +24,25 @@ export default function ContactPage() {
     {
       icon: <MapPin className="w-6 h-6" />,
       title: 'Address',
-      content: 'Khagaria, Bihar',
+      content: 'Sagarmal Chowk Opposite (Dr.Satish Kumar) Mill Road Khagaria Bihar 851205',
       subContent: 'Near Main Market',
     },
     {
       icon: <Phone className="w-6 h-6" />,
       title: 'Phone',
-      content: '+91 XXXXX XXXXX',
+      content: '+91 6200386449',
       subContent: 'Available 24/7 for emergencies',
     },
     {
       icon: <Mail className="w-6 h-6" />,
       title: 'Email',
-      content: 'info@khagariadiagnostic.com',
+      content: 'manish3002k@gmail.com',
       subContent: 'We reply within 24 hours',
     },
     {
       icon: <Clock className="w-6 h-6" />,
       title: 'Working Hours',
-      content: 'Monday - Saturday',
+      content: 'Monday - Sunday',
       subContent: '7:00 AM - 8:00 PM',
     },
   ];
@@ -88,19 +88,52 @@ export default function ContactPage() {
 
               <div className="bg-emerald-50 rounded-xl p-6">
                 <h3 className="font-semibold text-gray-800 mb-2">Sunday Hours</h3>
-                <p className="text-gray-600">7:00 AM - 2:00 PM</p>
+                <p className="text-gray-600">7:00 AM - 8:00 PM</p>
                 <p className="text-sm text-gray-500 mt-2">
                   Emergency services available on call
                 </p>
               </div>
 
               {/* Map placeholder */}
-              <div className="mt-8 bg-gray-200 rounded-xl h-64 flex items-center justify-center">
-                <div className="text-center text-gray-500">
-                  <MapPin className="w-12 h-12 mx-auto mb-2" />
-                  <p>Map: Khagaria, Bihar</p>
-                </div>
-              </div>
+                 <section className="py-20 bg-gradient-to-b from-slate-50 to-white">
+  <div className="max-w-7xl mx-auto px-4">
+
+    {/* Heading */}
+    <div className="text-center mb-10">
+      <span className="inline-block bg-emerald-100 text-emerald-700 px-4 py-2 rounded-full text-sm font-semibold mb-4">
+        📍 Visit Us
+      </span>
+
+      <h2 className="text-4xl font-bold text-gray-900 mb-3">
+        Find Our Location
+      </h2>
+
+      <p className="text-gray-500 max-w-2xl mx-auto">
+        Easily locate Khagaria Diagnostic Center on Google Maps.
+      </p>
+    </div>
+
+    {/* Map Card */}
+    <div className="relative rounded-3xl overflow-hidden shadow-2xl border border-gray-200 hover:shadow-emerald-200 transition-all duration-500">
+
+      <iframe
+        src="https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d655.2399542504287!2d86.46602657982793!3d25.50246756119778!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zMjXCsDMwJzA4LjIiTiA4NsKwMjcnNTkuOSJF!5e0!3m2!1sen!2sin!4v1783073202253!5m2!1sen!2sin"
+        className="w-full h-[500px]"
+        style={{ border: 0 }}
+        loading="lazy"
+        allowFullScreen
+        referrerPolicy="strict-origin-when-cross-origin"
+        title="Khagaria Diagnostic Center Location"
+      ></iframe>
+
+      {/* Bottom Gradient */}
+      <div className="absolute bottom-0 left-0 w-full h-24 bg-gradient-to-t from-black/30 to-transparent pointer-events-none"></div>
+
+    </div>
+
+  </div>
+</section>
+
             </div>
 
             {/* Contact Form */}
@@ -225,7 +258,7 @@ export default function ContactPage() {
               className="inline-flex items-center gap-2 bg-white text-emerald-700 px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
             >
               <Phone className="w-5 h-5" />
-              Call Now: +91 XXXXX XXXXX
+              Call Now: +91 6200386449
             </a>
           </div>
         </div>

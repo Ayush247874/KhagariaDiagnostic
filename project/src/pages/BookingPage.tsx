@@ -1,14 +1,17 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { supabase, Service, HealthPackage } from '../lib/supabase';
+import { services, Service } from '../data/services';
+import { healthPackages, HealthPackage } from '../data/packages';
 import { CheckCircle, Calendar, User, Phone, MapPin, FileText } from 'lucide-react';
 
 export default function BookingPage() {
   const [searchParams] = useSearchParams();
   const initialTest = searchParams.get('test') || '';
 
-  const [services, setServices] = useState<(Service | HealthPackage)[]>([]);
-  const [loading, setLoading] = useState(true);
+  const allTests: (Service | HealthPackage)[] = [
+  ...services,
+  ...healthPackages,
+].sort((a, b) => a.name.localeCompare(b.name));
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [bookingId, setBookingId] = useState<string>('');
@@ -25,29 +28,6 @@ export default function BookingPage() {
 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const [servicesRes, packagesRes] = await Promise.all([
-          supabase.from('services').select('*').order('name'),
-          supabase.from('health_packages').select('*').order('name'),
-        ]);
-
-        const allTests = [
-          ...(servicesRes.data || []),
-          ...(packagesRes.data || []),
-        ].sort((a, b) => a.name.localeCompare(b.name));
-
-        setServices(allTests);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchData();
-  }, []);
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
@@ -74,29 +54,16 @@ export default function BookingPage() {
 
     setSubmitting(true);
     try {
-      const { data, error } = await supabase
-        .from('bookings')
-        .insert({
-          patient_name: formData.patient_name,
-          mobile_number: formData.mobile_number,
-          age: formData.age ? parseInt(formData.age) : null,
-          gender: formData.gender || null,
-          address: formData.address || null,
-          test_name: formData.test_name,
-          preferred_date: formData.preferred_date,
-          booking_type: 'center_visit',
-          status: 'pending',
-        })
-        .select('id')
-        .single();
+        await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      if (error) throw error;
-      setBookingId(`KDC${Date.now().toString().slice(-8)}`);
-      setSubmitted(true);
-    } catch (error) {
-      console.error('Error submitting booking:', error);
-      setErrors({ submit: 'Failed to submit booking. Please try again.' });
-    } finally {
+        setBookingId(`KDC${Date.now().toString().slice(-8)}`);
+        setSubmitted(true);
+      } catch {
+        setErrors({
+          submit: 'Failed to submit booking.',
+        });
+      }
+     finally {
       setSubmitting(false);
     }
   };
@@ -255,24 +222,32 @@ export default function BookingPage() {
                       Select Test *
                     </span>
                   </label>
-                  {loading ? (
-                    <div className="animate-pulse bg-gray-200 h-12 rounded-lg"></div>
-                  ) : (
-                    <select
+                  <select
                       value={formData.test_name}
-                      onChange={(e) => setFormData({ ...formData, test_name: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          test_name: e.target.value,
+                        })
+                      }
                       className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 ${
                         errors.test_name ? 'border-red-300' : 'border-gray-200'
                       }`}
                     >
                       <option value="">Select a test</option>
-                      {services.map((service) => (
-                        <option key={`${service.id}-${service.name}`} value={service.name}>
-                          {service.name} {'price' in service && service.price ? `- ₹${service.price}` : ''}
+
+                      {allTests.map((service) => (
+                        <option
+                          key={`${service.id}-${service.name}`}
+                          value={service.name}
+                        >
+                          {service.name}
+                          {" price" in service && service.price
+                            ? ` - ₹${service.price}`
+                            : ""}
                         </option>
                       ))}
                     </select>
-                  )}
                   {errors.test_name && (
                     <p className="text-red-500 text-xs mt-1">{errors.test_name}</p>
                   )}

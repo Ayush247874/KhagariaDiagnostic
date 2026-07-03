@@ -66,21 +66,20 @@ export default function Footer() {
             <ul className="space-y-3">
               <li className="flex items-start gap-3">
                 <MapPin className="w-5 h-5 text-emerald-500 flex-shrink-0 mt-0.5" />
-                <span className="text-sm">Khagaria, Bihar</span>
+                <span className="text-sm">Sagarmal Chowk Opposite (Dr.Satish Kumar) Mill Road Khagaria Bihar 851205</span>
               </li>
               <li className="flex items-center gap-3">
                 <Phone className="w-5 h-5 text-emerald-500 flex-shrink-0" />
-                <span className="text-sm">+91 XXXXX XXXXX</span>
+                <span className="text-sm">+91 6200386449</span>
               </li>
               <li className="flex items-center gap-3">
                 <Mail className="w-5 h-5 text-emerald-500 flex-shrink-0" />
-                <span className="text-sm">info@khagariadiagnostic.com</span>
+                <span className="text-sm">manish3002k@gmail.com</span>
               </li>
               <li className="flex items-start gap-3">
                 <Clock className="w-5 h-5 text-emerald-500 flex-shrink-0 mt-0.5" />
                 <div className="text-sm">
-                  <p>Mon - Sat: 7:00 AM - 8:00 PM</p>
-                  <p>Sunday: 7:00 AM - 2:00 PM</p>
+                  <p>Mon - Sunday: 7:00 AM - 8:00 PM</p>
                 </div>
               </li>
             </ul>

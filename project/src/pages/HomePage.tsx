@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { supabase, Service, HealthPackage } from '../lib/supabase';
+import { services as serviceData, Service } from "../data/services";
+import { healthPackages, HealthPackage } from "../data/packages";
 import {
   Heart,
   Activity,
@@ -18,28 +19,20 @@ import {
 
 export default function HomePage() {
   const [services, setServices] = useState<Service[]>([]);
-  const [packages, setPackages] = useState<HealthPackage[]>([]);
-  const [loading, setLoading] = useState(true);
+const [packages, setPackages] = useState<HealthPackage[]>([]);
+const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const [servicesRes, packagesRes] = await Promise.all([
-          supabase.from('services').select('*').eq('is_popular', true).limit(8),
-          supabase.from('health_packages').select('*').eq('is_popular', true).limit(3),
-        ]);
+ useEffect(() => {
+  setServices(
+    serviceData.filter((service) => service.is_popular).slice(0, 8)
+  );
 
-        if (servicesRes.data) setServices(servicesRes.data);
-        if (packagesRes.data) setPackages(packagesRes.data);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      } finally {
-        setLoading(false);
-      }
-    }
+  setPackages(
+    healthPackages.filter((pkg) => pkg.is_popular).slice(0, 3)
+  );
 
-    fetchData();
-  }, []);
+  setLoading(false);
+}, []);
 
   const features = [
     {
@@ -237,69 +230,111 @@ export default function HomePage() {
       </section>
 
       {/* Popular Tests Section */}
-      <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-800 mb-4">Popular Tests</h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">
-              Quality diagnostics at affordable prices. Book your tests today!
-            </p>
-          </div>
+     {/* Popular Tests */}
+<section className="py-20 bg-gradient-to-b from-white to-emerald-50">
+  <div className="max-w-7xl mx-auto px-4">
 
-          {loading ? (
-            <div className="text-center py-12">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600 mx-auto"></div>
-            </div>
-          ) : (
-            <>
-              <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-                {services.map((service) => (
-                  <div
-                    key={service.id}
-                    className="bg-gray-50 border border-gray-100 rounded-xl p-6 hover:shadow-lg hover:border-emerald-200 transition-all group"
-                  >
-                    <div className="flex justify-between items-start mb-4">
-                      <span className="text-xs bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full font-medium">
-                        {service.category}
-                      </span>
-                      {service.is_popular && (
-                        <span className="text-xs bg-amber-100 text-amber-700 px-2 py-1 rounded-full">
-                          Popular
-                        </span>
-                      )}
-                    </div>
-                    <h3 className="text-lg font-semibold text-gray-800 mb-2">{service.name}</h3>
-                    {service.description && (
-                      <p className="text-sm text-gray-600 mb-4">{service.description}</p>
-                    )}
-                    <div className="flex justify-between items-center">
-                      {service.price && (
-                        <span className="text-xl font-bold text-emerald-600">₹{service.price}</span>
-                      )}
-                      <Link
-                        to={`/booking?test=${encodeURIComponent(service.name)}`}
-                        className="text-sm text-emerald-600 font-medium hover:underline"
-                      >
-                        Book Now
-                      </Link>
-                    </div>
+    {/* Heading */}
+    <div className="text-center mb-14">
+      <span className="inline-block px-4 py-2 rounded-full bg-emerald-100 text-[#134e4a] text-sm font-semibold mb-4">
+        Most Booked Tests
+      </span>
+
+      <h2 className="text-4xl font-bold text-gray-900 mb-4">
+        Popular Diagnostic Tests
+      </h2>
+
+      <p className="text-gray-600 max-w-2xl mx-auto text-lg">
+        Get accurate laboratory testing with affordable pricing and quick reporting.
+      </p>
+    </div>
+
+    {loading ? (
+      <div className="flex justify-center py-20">
+        <div className="h-14 w-14 rounded-full border-4 border-emerald-600 border-t-transparent animate-spin"></div>
+      </div>
+    ) : (
+      <>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
+
+          {services.map((service) => (
+            <div
+              key={service.id}
+              className="bg-white rounded-2xl border border-gray-200 shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-300 overflow-hidden"
+            >
+              {/* Top */}
+              <div className="bg-gradient-to-r from-[#134e4a] to-emerald-600 p-5 text-white">
+
+                <div className="flex justify-between items-center mb-4">
+                  <span className="bg-white/20 px-3 py-1 rounded-full text-xs">
+                    {service.category}
+                  </span>
+
+                  {service.is_popular && (
+                    <span className="bg-yellow-400 text-black text-xs px-3 py-1 rounded-full font-semibold">
+                      ★ Popular
+                    </span>
+                  )}
+                </div>
+
+                <div className="w-14 h-14 bg-white/20 rounded-full flex items-center justify-center text-2xl mb-4">
+                  🧪
+                </div>
+
+                <h3 className="text-xl font-bold">
+                  {service.name}
+                </h3>
+              </div>
+
+              {/* Body */}
+              <div className="p-6">
+
+                <p className="text-gray-600 text-sm mb-6 min-h-[48px]">
+                  {service.description ||
+                    "Reliable diagnostic testing with accurate and timely reports."}
+                </p>
+
+                <div className="flex items-center justify-between mb-5">
+
+                  <div>
+                    <p className="text-xs text-gray-500">
+                      Starting From
+                    </p>
+
+                    <h4 className="text-2xl font-bold text-[#134e4a]">
+                      ₹{service.price || "--"}
+                    </h4>
                   </div>
-                ))}
-              </div>
 
-              <div className="text-center">
+                </div>
+
                 <Link
-                  to="/services"
-                  className="inline-flex items-center gap-2 bg-emerald-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-emerald-700 transition-colors"
+                  to={`/booking?test=${encodeURIComponent(service.name)}`}
+                  className="block w-full text-center bg-[#134e4a] hover:bg-emerald-700 text-white py-3 rounded-xl font-semibold transition"
                 >
-                  View All Tests
-                  <ArrowRight className="w-5 h-5" />
+                  Book Test
                 </Link>
+
               </div>
-            </>
-          )}
+            </div>
+          ))}
+
         </div>
-      </section>
+
+        {/* Button */}
+        <div className="text-center mt-14">
+          <Link
+            to="/services"
+            className="inline-flex items-center gap-2 bg-[#134e4a] hover:bg-emerald-700 text-white px-8 py-4 rounded-xl font-semibold shadow-lg transition-all hover:scale-105"
+          >
+            View All Tests
+            <ArrowRight className="w-5 h-5" />
+          </Link>
+        </div>
+      </>
+    )}
+  </div>
+</section>
 
       {/* Health Packages Section */}
       <section className="py-20 bg-emerald-50">

@@ -1,31 +1,8 @@
-import { useState, useEffect } from 'react';
-import { supabase, Doctor } from '../lib/supabase';
-import { User, Award, Briefcase, GraduationCap } from 'lucide-react';
+import { doctors } from "../data/doctors";
+import { User, Award, Briefcase, GraduationCap } from "lucide-react";
 
 export default function DoctorsPage() {
-  const [doctors, setDoctors] = useState<Doctor[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    async function fetchDoctors() {
-      try {
-        const { data, error } = await supabase
-          .from('doctors')
-          .select('*')
-          .eq('is_active', true)
-          .order('name');
-
-        if (error) throw error;
-        setDoctors(data || []);
-      } catch (error) {
-        console.error('Error fetching doctors:', error);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchDoctors();
-  }, []);
+  const activeDoctors = doctors.filter((doctor) => doctor.is_active);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -33,8 +10,10 @@ export default function DoctorsPage() {
       <section className="bg-gradient-to-br from-emerald-800 to-teal-900 text-white py-16">
         <div className="max-w-7xl mx-auto px-4">
           <h1 className="text-4xl font-bold mb-4">Our Doctors</h1>
+
           <p className="text-emerald-100 max-w-2xl">
-            Meet our team of experienced pathologists and specialists dedicated to providing accurate diagnostics.
+            Meet our team of experienced pathologists and specialists
+            dedicated to providing accurate diagnostics.
           </p>
         </div>
       </section>
@@ -42,23 +21,20 @@ export default function DoctorsPage() {
       {/* Doctors Grid */}
       <section className="py-12">
         <div className="max-w-7xl mx-auto px-4">
-          {loading ? (
-            <div className="text-center py-12">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600 mx-auto"></div>
-            </div>
-          ) : doctors.length > 0 ? (
+          {activeDoctors.length > 0 ? (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {doctors.map((doctor) => (
+              {activeDoctors.map((doctor) => (
                 <div
                   key={doctor.id}
-                  className="bg-white rounded-2xl shadow-sm overflow-hidden hover:shadow-lg transition-shadow group"
+                  className="bg-white rounded-2xl shadow-sm overflow-hidden hover:shadow-xl transition-all duration-300 group"
                 >
-                  <div className="relative h-64 bg-gradient-to-br from-emerald-100 to-teal-100">
+                  {/* Doctor Image */}
+                  <div className="relative h-72 bg-gradient-to-br from-emerald-100 to-teal-100">
                     {doctor.image_url ? (
                       <img
                         src={doctor.image_url}
                         alt={doctor.name}
-                        className="w-full h-full object-cover"
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center">
@@ -67,98 +43,148 @@ export default function DoctorsPage() {
                         </div>
                       </div>
                     )}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
-                    <div className="absolute bottom-4 left-4 right-4">
-                      <h3 className="text-xl font-bold text-white mb-1">{doctor.name}</h3>
-                      <p className="text-emerald-100 text-sm">{doctor.specialization}</p>
+
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent"></div>
+
+                    <div className="absolute bottom-5 left-5">
+                      <h3 className="text-2xl font-bold text-white">
+                        {doctor.name}
+                      </h3>
+
+                      <p className="text-emerald-200">
+                        {doctor.specialization}
+                      </p>
                     </div>
                   </div>
 
-                  <div className="p-6">
-                    <div className="space-y-4">
-                      <div className="flex items-start gap-3">
-                        <div className="bg-emerald-100 p-2 rounded-lg">
-                          <GraduationCap className="w-5 h-5 text-emerald-600" />
-                        </div>
-                        <div>
-                          <p className="text-xs text-gray-500">Qualification</p>
-                          <p className="font-medium text-gray-800">{doctor.qualification}</p>
-                        </div>
+                  {/* Doctor Details */}
+                  <div className="p-6 space-y-5">
+                    <div className="flex items-start gap-3">
+                      <div className="bg-emerald-100 p-2 rounded-lg">
+                        <GraduationCap className="w-5 h-5 text-emerald-600" />
                       </div>
 
-                      {doctor.specialization && (
-                        <div className="flex items-start gap-3">
-                          <div className="bg-emerald-100 p-2 rounded-lg">
-                            <Award className="w-5 h-5 text-emerald-600" />
-                          </div>
-                          <div>
-                            <p className="text-xs text-gray-500">Specialization</p>
-                            <p className="font-medium text-gray-800">{doctor.specialization}</p>
-                          </div>
-                        </div>
-                      )}
+                      <div>
+                        <p className="text-xs text-gray-500">
+                          Qualification
+                        </p>
 
-                      {doctor.experience_years && (
-                        <div className="flex items-start gap-3">
-                          <div className="bg-emerald-100 p-2 rounded-lg">
-                            <Briefcase className="w-5 h-5 text-emerald-600" />
-                          </div>
-                          <div>
-                            <p className="text-xs text-gray-500">Experience</p>
-                            <p className="font-medium text-gray-800">{doctor.experience_years}+ Years</p>
-                          </div>
-                        </div>
-                      )}
+                        <p className="font-semibold text-gray-800">
+                          {doctor.qualification}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start gap-3">
+                      <div className="bg-emerald-100 p-2 rounded-lg">
+                        <Award className="w-5 h-5 text-emerald-600" />
+                      </div>
+
+                      <div>
+                        <p className="text-xs text-gray-500">
+                          Specialization
+                        </p>
+
+                        <p className="font-semibold text-gray-800">
+                          {doctor.specialization}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start gap-3">
+                      <div className="bg-emerald-100 p-2 rounded-lg">
+                        <Briefcase className="w-5 h-5 text-emerald-600" />
+                      </div>
+
+                      <div>
+                        <p className="text-xs text-gray-500">
+                          Experience
+                        </p>
+
+                        <p className="font-semibold text-gray-800">
+                          {doctor.experience_years}+ Years
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </div>
               ))}
             </div>
           ) : (
-            <div className="text-center py-12 bg-white rounded-xl">
-              <User className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-              <p className="text-gray-500">No doctors information available at the moment.</p>
+            <div className="bg-white rounded-xl p-10 text-center shadow-sm">
+              <User className="w-16 h-16 mx-auto text-gray-300 mb-4" />
+
+              <h3 className="text-xl font-semibold text-gray-700">
+                No Doctors Available
+              </h3>
+
+              <p className="text-gray-500 mt-2">
+                Doctors information will be updated soon.
+              </p>
             </div>
           )}
         </div>
       </section>
 
-      {/* Why Our Doctors Section */}
-      <section className="py-12 bg-white">
+      {/* Why Choose Our Doctors */}
+      <section className="bg-white py-16">
         <div className="max-w-7xl mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-800 mb-4">Why Our Doctors?</h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">
-              Our team of pathologists and technicians are committed to accuracy and patient care.
+          <div className="text-center mb-14">
+            <h2 className="text-3xl font-bold text-gray-800">
+              Why Choose Our Doctors?
+            </h2>
+
+            <p className="mt-3 text-gray-600 max-w-2xl mx-auto">
+              Our highly qualified doctors and laboratory experts ensure
+              accurate diagnosis and quality healthcare services.
             </p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
-            {[
-              {
-                title: 'Expert Analysis',
-                description: 'Our pathologists have years of experience in analyzing complex cases and providing accurate diagnoses.',
-                icon: <Award className="w-8 h-8" />,
-              },
-              {
-                title: 'Continuous Training',
-                description: 'Our team regularly updates their skills with the latest diagnostic techniques and technologies.',
-                icon: <GraduationCap className="w-8 h-8" />,
-              },
-              {
-                title: 'Patient-Centric Care',
-                description: 'We prioritize patient well-being and ensure clear communication about test results.',
-                icon: <User className="w-8 h-8" />,
-              },
-            ].map((item, index) => (
-              <div key={index} className="bg-gray-50 rounded-xl p-6 text-center">
-                <div className="bg-emerald-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-emerald-600">
-                  {item.icon}
-                </div>
-                <h3 className="text-lg font-semibold text-gray-800 mb-2">{item.title}</h3>
-                <p className="text-gray-600 text-sm">{item.description}</p>
+            <div className="bg-gray-50 rounded-xl p-8 text-center shadow-sm hover:shadow-md transition">
+              <div className="w-16 h-16 rounded-full bg-emerald-100 flex items-center justify-center mx-auto mb-5">
+                <Award className="w-8 h-8 text-emerald-600" />
               </div>
-            ))}
+
+              <h3 className="text-xl font-semibold mb-3">
+                Expert Doctors
+              </h3>
+
+              <p className="text-gray-600">
+                Experienced specialists providing accurate diagnosis with
+                modern medical techniques.
+              </p>
+            </div>
+
+            <div className="bg-gray-50 rounded-xl p-8 text-center shadow-sm hover:shadow-md transition">
+              <div className="w-16 h-16 rounded-full bg-emerald-100 flex items-center justify-center mx-auto mb-5">
+                <GraduationCap className="w-8 h-8 text-emerald-600" />
+              </div>
+
+              <h3 className="text-xl font-semibold mb-3">
+                Certified Professionals
+              </h3>
+
+              <p className="text-gray-600">
+                Continuously trained professionals using the latest laboratory
+                standards and technology.
+              </p>
+            </div>
+
+            <div className="bg-gray-50 rounded-xl p-8 text-center shadow-sm hover:shadow-md transition">
+              <div className="w-16 h-16 rounded-full bg-emerald-100 flex items-center justify-center mx-auto mb-5">
+                <User className="w-8 h-8 text-emerald-600" />
+              </div>
+
+              <h3 className="text-xl font-semibold mb-3">
+                Patient First
+              </h3>
+
+              <p className="text-gray-600">
+                We believe in patient-focused care, transparency, and timely,
+                accurate diagnostic reports.
+              </p>
+            </div>
           </div>
         </div>
       </section>

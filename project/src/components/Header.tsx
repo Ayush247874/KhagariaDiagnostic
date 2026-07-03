@@ -11,8 +11,8 @@ export default function Header() {
     { name: 'Services', path: '/services' },
     { name: 'Book Test', path: '/booking' },
     { name: 'Home Collection', path: '/home-collection' },
-    { name: 'Reports', path: '/reports' },
-    { name: 'Doctors', path: '/doctors' },
+    // { name: 'Reports', path: '/reports' },
+    // { name: 'Doctors', path: '/doctors' },
     { name: 'Contact', path: '/contact' },
   ];
 
@@ -25,11 +25,11 @@ export default function Header() {
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
               <Phone className="w-4 h-4" />
-              <span>+91 XXXXX XXXXX</span>
+              <span>+91 6200386449</span>
             </div>
           </div>
           <div className="hidden sm:block text-emerald-100">
-            Mon - Sat: 7:00 AM - 8:00 PM | Sun: 7:00 AM - 2:00 PM
+            Mon - Sun: 7:00 AM - 8:00 PM 
           </div>
         </div>
       </div>
